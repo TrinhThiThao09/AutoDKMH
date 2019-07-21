@@ -1,0 +1,58 @@
+CREATE DATABASE my_classicmodels;
+USE my_classicmodels;
+
+CREATE TABLE orders(
+	orderNumber INT(11) NOT NULL AUTO_INCREMENT,
+	orderDate DATETIME NOT NULL,
+	requiredDate DATETIME NOT NULL,
+	shippedDate DATETIME NOT NULL,
+	status VARCHAR(15) NOT NULL,
+	comments TEXT,
+	customerNumber INT(11) NOT NULL,
+	PRIMARY KEY(orderNumber)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE productlines(
+	productLine VARCHAR(50) NOT NULL AUTO_INCREMENT,
+	textDescription VARCHAR(4000),
+	htmlDescription MEDIUMTEXT,
+	image MEDIUMBLOB,
+	PRIMARY KEY(productLine)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE orderdetails(
+	orderNumber INT(11) NOT NULL AUTO_INCREMENT,
+	productCode VARCHAR(15) NOT NULL,
+	quantityOrdered INT(11) NOT NULL,
+	priceEach DOUBLE NOT NULL,
+	orderLineNuber SMALLINT(6),
+	PRIMARY KEY(orderNumber, productCode)
+	UNIQUE(orderNumber,productCode)
+	CONSTRAINT fk_orderdetails_products FOREIGN KEY(productCode) REFERENCES products()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE products(
+	productCode VARCHAR(15) NOT NULL AUTO_INCREMENT,
+	productName VARCHAR(70) NOT NULL,
+	productLine VARCHAR(50) NOT NULL,
+	productScale VARCHAR(10) NOT NULL,
+	productVendor VARCHAR(50) NOT NULL,
+	productDescription TEXT NOT NULL,
+	quantityInStock SMALLINT(6) NOT NULL,
+	buyPrice DOUBLE NOT NULL,
+	PRIMARY KEY(productCode)
+	CONSTRAINT fk_products_productlines FOREIGN KEY(productLine) REFERENCES productLines(productLine) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE orderdetails(
+	orderNumber INT(11) NOT NULL AUTO_INCREMENT,
+	productCode VARCHAR(15) NOT NULL,
+	quantityOrdered INT(11) NOT NULL,
+	priceEach DOUBLE NOT NULL,
+	orderLineNuber SMALLINT(6),
+	PRIMARY KEY(orderNumber, productCode)
+	UNIQUE(orderNumber,productCode)
+	CONSTRAINT fk_orderdetails_products FOREIGN KEY(productCode) REFERENCES products(productCode) ON UPDATE CASCADE
+	CONSTRAINT fk_orderdetails_orders FOREIGN KEY(orderNumber) REFERENCES orders(orderNumber) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
